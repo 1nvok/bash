@@ -1,0 +1,127 @@
+#!/bin/bash
+echo "Content-Type: text/html"
+echo
+
+if [ "$REQUEST_METHOD" = "POST" ]; then
+  if [ "$CONTENT_LENGTH" -gt 0 ]; then
+      read -n $CONTENT_LENGTH POST_DATA <&0
+  fi
+fi
+
+IFS='&'
+set -- $POST_DATA
+
+fdir=todo.list
+
+### FILERE NAME:
+function filter01()
+{
+local x y z
+y="${1//+/ }%%"
+ while [ ${#y} -gt 0 -a "${y}" != "%" ]; do
+    x="${x}${y%%\%*}"
+    y="${y#*%}"
+       if [ ${#y} -gt 0 -a "${y}" != "%" ]; then
+          z=${y:0:2}
+          y="${y:2}"
+          x="${x}"`echo -e \\\\x${z}`
+       fi
+ done
+var01="${x}"
+}
+
+### FILTER TEXT:
+function filter02()
+{
+local x y z
+y="${1//+/ }%%"
+ while [ ${#y} -gt 0 -a "${y}" != "%" ]; do
+    x="${x}${y%%\%*}"
+    y="${y#*%}"
+       if [ ${#y} -gt 0 -a "${y}" != "%" ]; then
+          z=${y:0:2}
+          y="${y:2}"
+          x="${x}"`echo -e \\\\x${z}`
+       fi
+ done
+var02="${x}"
+}
+
+### CHECK DIR:
+function check01(){
+if [ -e "$PWD"/"$fdir"/"$1" ]
+ then
+    return 0
+ else
+    return 1
+fi
+}
+
+### NUMBER OF LINES NAME:
+function check_name_length(){
+if [ ${#1} -gt 25 ]
+ then
+    echo '<b>'"The string is too large: "'</b>''<br>''<br>''<br>'
+    echo -e "\n" "<a href="$HTTP_REFERER"> GO BACK!</a>"
+    exit 1
+ else
+    return
+fi
+}
+
+### NUMBER OF LINES TEXT:
+function check_text_length(){
+if [ ${#1} -gt 250 ]
+ then
+    echo '<b>'"The string is too large: "'</b>''<br>''<br>''<br>'
+    echo -e "\n" "<a href="$HTTP_REFERER"> GO BACK!</a>"
+    exit 1
+ else
+   return
+fi
+}
+
+echo '<br>'
+add=$(echo "$1" | sed 's/new=//g')
+text=$(echo "$2" | sed 's/new2=//g')
+cptxt=$3
+
+### CHECKS:
+filter01 $add
+filter02 $text
+check_name_length $var01
+check_text_length $var02
+
+### CREATE FILE:
+check01 $var01
+if [ $? == "0" ] 
+then
+#echo $?
+rdom=$(head /dev/urandom | cksum | cut -f1 -d " ")
+touch "$PWD"/"$fdir"/"$var01""$rdom" && echo "$var02" > "$PWD"/"$fdir"/"$var01""$rdom"
+echo "Created duplicate file '$var01' by number: $rdom "
+#exit 0
+else
+#echo $?
+echo "$var02" >"$PWD"/"$fdir"/"$var01"
+echo '<b>'"File '$var01' has been created."'</b>'
+#exit 0
+fi
+
+### \delete Just OK:
+echo '<br>'
+echo '<br>'
+if [ -e "$PWD"/"$fdir"/"$var01" ]
+ then
+  echo 'Ok'
+ else
+  echo 'Something wrong =('
+fi
+
+### GO BACK:
+echo '<br><br>'
+echo "<a href="$HTTP_REFERER"> GO BACK!</a>"
+echo '<br>'
+#echo '<pre>'
+#env
+#echo '</pre>'

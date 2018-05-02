@@ -1,0 +1,31 @@
+#!/bin/bash
+
+echo "Content-type: text/html"
+echo
+
+if [ "$REQUEST_METHOD" = "POST" ]; then
+  if [ "$CONTENT_LENGTH" -gt 0 ]; then
+      read -n $CONTENT_LENGTH POST_DATA <&0
+  fi
+fi
+
+fdir=todo.list
+set -- $POST_DATA
+echo '<br>'
+echo '<br>'
+
+delall01=$(echo "$1" | sed '1,$ s/=.*//g')
+
+if [ "$delall01" == "rmrf" ]
+then
+ echo "All files has been removed:"
+ rm -rf "$PWD"/"$fdir"/*
+else
+ echo "$? Something wrong =("
+  exit 1
+fi
+
+echo '<br><br>'
+### GO BACK:
+echo "<a href="$HTTP_REFERER"> GO BACK!</a>"
+

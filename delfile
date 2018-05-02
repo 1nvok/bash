@@ -1,0 +1,54 @@
+#!/bin/bash
+
+echo "Content-type: text/html"
+echo
+
+if [ "$REQUEST_METHOD" = "POST" ]; then
+  if [ "$CONTENT_LENGTH" -gt 0 ]; then
+      read -n $CONTENT_LENGTH POST_DATA <&0
+  fi
+fi
+
+fdir=todo.list
+IFS=$'\n'
+set -- $POST_DATA
+
+function filter03()
+{
+local x y z
+y="${1//+/ }%%"
+ while [ ${#y} -gt 0 -a "${y}" != "%" ]; do
+    x="${x}${y%%\%*}"
+    y="${y#*%}"
+       if [ ${#y} -gt 0 -a "${y}" != "%" ]; then
+          z=${y:0:2}
+          y="${y:2}"
+          x="${x}"`echo -e \\\\x${z}`
+       fi
+ done
+var03="${x}"
+}
+
+del01=$(echo "$1" | sed '1,$ s/.*=//g')
+del02=$(echo "$1" | sed '1,$ s/=.*//g')
+
+### Filtering string:
+filter03 "$del02"
+
+if [ "$del01" == "Delete" ]
+then
+ echo "File '$var03' has been removed:"
+ rm -f "$PWD"/"$fdir"/"$var03"
+else
+ echo "$? Something wrong =("
+ exit 1
+fi
+
+echo '<br><br>'
+echo "<a href="$HTTP_REFERER"> GO BACK!</a>"
+echo '<br>'
+echo '<hr>'
+#echo '<pre>'
+#cat
+#env
+#echo '/<pre>'

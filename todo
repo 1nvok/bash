@@ -1,0 +1,51 @@
+#!/bin/bash
+
+echo 'Content-Type: text/html'
+echo
+
+fdir=todo.list/
+IFS="="
+
+echo '<form method="POST" action="delfile" >'
+if [ ! "$(ls -A "$fdir")" = "" ]
+ then
+  for i in todo.list/*
+     do
+        echo '<h1>'Due to `basename $i` :'</h1>'
+        echo '<pre>'
+         cat $i
+         echo '</pre>'
+         echo '<input type="submit" value="Delete"  name="'`basename $i`'"></input>'
+     done
+#echo '</form>'
+ else
+    echo 'Files not found: =('    
+fi 
+echo '</form>'
+#echo '</form>'
+
+echo '<br>'
+echo '<form method="POST" action="addfile">'
+echo '<h4> Name: </h4>'
+echo '<input type="text" name="new"></input>'
+echo '<br>'
+echo '<br>'
+echo 'Text:'
+echo '<br>'
+echo '<input type="text" name="new2"></input>'
+echo '<input type="submit" name="save" value="Add"></input>'
+echo '</form>'
+
+echo '<br>'
+echo '<br>'
+echo '<form method="POST" action="delall">'
+echo '<input type="submit" name="rmrf" value="Purge All"></input>'
+echo '</form>'
+
+echo '<br>'
+echo '<hr>'
+#echo '<pre>'
+#env
+#cat
+#echo '</pre>'
+#echo '<br>'
