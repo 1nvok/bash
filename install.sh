@@ -27,5 +27,5 @@ cat <<EOF >> /etc/httpd/conf/httpd.conf
 EOF
 
 if [ "$?" -eq 0 ]; then
-echo 'OK'; else
+echo "Done, go in http://${IP}/cgi-bin/todo"; else
 echo 'FAILED =('; fi
