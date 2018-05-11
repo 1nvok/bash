@@ -13,7 +13,7 @@ set -- $POST_DATA
 
 fdir=todo.list
 
-### FILERE NAME:
+### FILTER NAME:
 function filter01()
 {
 local x y z
@@ -82,9 +82,9 @@ fi
 }
 
 echo '<br>'
+### INCOMING DATA:
 add=$(echo "$1" | sed 's/new=//g')
 text=$(echo "$2" | sed 's/new2=//g')
-cptxt=$3
 
 ### CHECKS:
 filter01 $add
@@ -93,19 +93,14 @@ check_name_length $var01
 check_text_length $var02
 
 ### CREATE FILE:
-check01 $var01
-if [ $? == "0" ] 
+if ( check01 $var01 -eq 0 )
 then
-#echo $?
-rdom=$(head /dev/urandom | cksum | cut -f1 -d " ")
-touch "$PWD"/"$fdir"/"$var01""$rdom" && echo "$var02" > "$PWD"/"$fdir"/"$var01""$rdom"
-echo "Created duplicate file '$var01' by number: $rdom "
-#exit 0
+ rdom=$(head /dev/urandom | cksum | cut -f1 -d " ")
+ touch "$PWD"/"$fdir"/"$var01""$rdom" && echo "$var02" > "$PWD"/"$fdir"/"$var01""$rdom"
+ echo "Created duplicate file '$var01' by number: $rdom "
 else
-#echo $?
-echo "$var02" >"$PWD"/"$fdir"/"$var01"
-echo '<b>'"File '$var01' has been created."'</b>'
-#exit 0
+ echo "$var02" >"$PWD"/"$fdir"/"$var01"
+ echo '<b>'"File '$var01' has been created."'</b>'
 fi
 
 ### \delete Just OK:
