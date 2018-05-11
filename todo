@@ -17,12 +17,10 @@ if [ ! "$(ls -A "$fdir")" = "" ]
          echo '</pre>'
          echo '<input type="submit" value="Delete"  name="'`basename $i`'"></input>'
      done
-#echo '</form>'
  else
     echo 'Files not found: =('    
 fi 
 echo '</form>'
-#echo '</form>'
 
 echo '<br>'
 echo '<form method="POST" action="addfile">'
